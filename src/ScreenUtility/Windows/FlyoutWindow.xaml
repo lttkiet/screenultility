@@ -1,0 +1,116 @@
+<Window x:Class="ScreenUtility.Windows.FlyoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:ScreenUtility.Controls"
+        Title="Screen Utility"
+        Width="376"
+        SizeToContent="Height"
+        MaxHeight="720"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        Deactivated="OnDeactivated">
+
+    <Grid Margin="10">
+        <Border Background="{DynamicResource PanelBackgroundBrush}"
+                BorderBrush="{DynamicResource PanelBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Effect="{StaticResource PanelShadow}">
+            <DockPanel Margin="16,12,13,12" LastChildFill="True">
+
+                <!-- Header -->
+                <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <TextBlock Text="Displays"
+                               FontFamily="{DynamicResource DisplayFont}"
+                               FontSize="17"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <ToggleButton Style="{StaticResource IconToggleStyle}"
+                                      IsChecked="{Binding LinkedBrightness, Mode=TwoWay}"
+                                      ToolTip="Link brightness across displays"
+                                      AutomationProperties.Name="Link brightness">
+                            <TextBlock Text="&#xE71B;"
+                                       FontFamily="{DynamicResource IconFont}"
+                                       FontSize="16" />
+                        </ToggleButton>
+                        <Button Style="{StaticResource IconButtonStyle}"
+                                Click="OnIdentifyClick"
+                                ToolTip="Identify displays"
+                                AutomationProperties.Name="Identify displays">
+                            <TextBlock Text="&#xE8B3;"
+                                       FontFamily="{DynamicResource IconFont}"
+                                       FontSize="16" />
+                        </Button>
+                        <Button Style="{StaticResource IconButtonStyle}"
+                                Click="OnRefreshClick"
+                                ToolTip="Refresh displays"
+                                AutomationProperties.Name="Refresh displays">
+                            <TextBlock Text="&#xE72C;"
+                                       FontFamily="{DynamicResource IconFont}"
+                                       FontSize="16" />
+                        </Button>
+                        <Button Style="{StaticResource IconButtonStyle}"
+                                Click="OnSettingsClick"
+                                ToolTip="Settings"
+                                AutomationProperties.Name="Settings">
+                            <TextBlock Text="&#xE713;"
+                                       FontFamily="{DynamicResource IconFont}"
+                                       FontSize="16" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Border DockPanel.Dock="Top"
+                        Height="1"
+                        Background="{DynamicResource SeperatorBrush}"
+                        Margin="0,0,0,12" />
+
+                <TextBlock DockPanel.Dock="Bottom"
+                           Text="Scroll over the tray icon or a slider to adjust brightness."
+                           Style="{StaticResource MutedTextStyle}"
+                           Foreground="{DynamicResource TertiaryTextBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,10,0,0" />
+
+                <!-- Monitor list -->
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  CanContentScroll="False"
+                                  Focusable="False">
+                        <ItemsControl ItemsSource="{Binding Monitors}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:MonitorCard />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <TextBlock Text="{Binding EmptyMessage}"
+                               Visibility="{Binding HasMonitors, Converter={StaticResource InverseBoolToVisibility}}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               FontSize="12.5"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="20,24"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap" />
+                </Grid>
+
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

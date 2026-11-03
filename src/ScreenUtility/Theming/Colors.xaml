@@ -1,0 +1,51 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:theming="clr-namespace:ScreenUtility.Theming">
+
+    <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="DisplayFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="PanelBorderBrush" Color="#D6D6D6" />
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#1B1B1B" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#5E5E5E" />
+    <SolidColorBrush x:Key="TertiaryTextBrush" Color="#7A7A7A" />
+    <SolidColorBrush x:Key="ControlTrackBrush" Color="#868686" />
+    <SolidColorBrush x:Key="ThumbBorderBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="HoverBrush" Color="#0F000000" />
+    <SolidColorBrush x:Key="PressedBrush" Color="#1A000000" />
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#FBFBFB" />
+    <SolidColorBrush x:Key="MenuBorderBrush" Color="#D8D8D8" />
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#C42B1C" />
+    <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="#E61C1C1C" />
+    <SolidColorBrush x:Key="OverlayTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SeperatorBrush" Color="#E3E3E3" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#0078D4" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#0069BA" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#005A9E" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#1F0078D4" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#FFFFFF" />
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <theming:InverseBooleanConverter x:Key="InverseBoolean" />
+    <theming:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
+    <theming:NullToVisibilityConverter x:Key="NullToVisibility" />
+    <theming:EqualityConverter x:Key="Equality" />
+
+    <DropShadowEffect x:Key="PanelShadow"
+                      BlurRadius="22"
+                      ShadowDepth="4"
+                      Direction="270"
+                      Opacity="0.32"
+                      Color="#000000" />
+
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+
+</ResourceDictionary>

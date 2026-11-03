@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="ScreenUtility.Controls.MonitorCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:ScreenUtility.Models"
+             x:Name="Root"
+             Focusable="False">
+
+    <StackPanel Margin="0,0,0,16">
+
+        <!-- Monitor name -->
+        <Grid Margin="0,0,0,3">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding MonitorGlyph}"
+                           FontFamily="{DynamicResource IconFont}"
+                           FontSize="17"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           ToolTip="{Binding BrightnessSourceLabel, StringFormat=Brightness source: {0}}" />
+                <TextBlock Text="{Binding DisplayName}"
+                           FontSize="14.5"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" />
+                <Border Style="{StaticResource BadgeBorderStyle}"
+                        Visibility="{Binding IsPrimary, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="PRIMARY" Style="{StaticResource BadgeTextStyle}" />
+                </Border>
+            </StackPanel>
+            <TextBlock Text="{Binding Number, StringFormat=Display {0}}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TertiaryTextBrush}"
+                       FontSize="11" />
+        </Grid>
+
+        <!-- Brightness -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="27" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="16" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="&#xE706;"
+                       FontFamily="{DynamicResource IconFont}"
+                       FontSize="15"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       VerticalAlignment="Center"
+                       ToolTip="Brightness" />
+
+            <Slider Grid.Column="1"
+                    Style="{StaticResource AccentSliderStyle}"
+                    Value="{Binding Brightness, Mode=TwoWay}"
+                    IsEnabled="{Binding SupportsBrightness}"
+                    ToolTip="{Binding BrightnessSourceLabel, StringFormat=Brightness via {0}}"
+                    PreviewMouseWheel="OnBrightnessWheel"
+                    AutomationProperties.Name="Brightness" />
+
+            <TextBox Grid.Column="2"
+                     Style="{StaticResource PercentTextBoxStyle}"
+                     Text="{Binding BrightnessPercent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     IsEnabled="{Binding SupportsBrightness}"
+                     GotKeyboardFocus="OnPercentGotFocus"
+                     KeyDown="OnPercentKeyDown"
+                     AutomationProperties.Name="Brightness percent" />
+
+            <TextBlock Grid.Column="3"
+                       Text="%"
+                       FontSize="10.5"
+                       Foreground="{DynamicResource TertiaryTextBrush}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="0,1,0,0" />
+        </Grid>
+
+        <!-- Contrast (only displayed when the monitor reports VCP 0x12) -->
+        <Grid Visibility="{Binding SupportsContrast, Converter={StaticResource BoolToVisibility}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="27" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="16" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="&#xE793;"
+                       FontFamily="{DynamicResource IconFont}"
+                       FontSize="15"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       VerticalAlignment="Center"
+                       ToolTip="Contrast" />
+
+            <Slider Grid.Column="1"
+                    Style="{StaticResource AccentSliderStyle}"
+                    Value="{Binding Contrast, Mode=TwoWay}"
+                    ToolTip="Contrast via DDC/CI"
+                    PreviewMouseWheel="OnContrastWheel"
+                    AutomationProperties.Name="Contrast" />
+
+            <TextBox Grid.Column="2"
+                     Style="{StaticResource PercentTextBoxStyle}"
+                     Text="{Binding ContrastPercent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     GotKeyboardFocus="OnPercentGotFocus"
+                     KeyDown="OnPercentKeyDown"
+                     AutomationProperties.Name="Contrast percent" />
+
+            <TextBlock Grid.Column="3"
+                       Text="%"
+                       FontSize="10.5"
+                       Foreground="{DynamicResource TertiaryTextBrush}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="0,1,0,0" />
+        </Grid>
+
+        <!-- Orientation -->
+        <Grid Margin="0,3,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="27" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="&#xE7AD;"
+                       FontFamily="{DynamicResource IconFont}"
+                       FontSize="15"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       VerticalAlignment="Center"
+                       ToolTip="Screen orientation" />
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <RadioButton Style="{StaticResource OrientationRadioStyle}"
+                             Tag="Landscape"
+                             ToolTip="Landscape"
+                             AutomationProperties.Name="Landscape"
+                             IsChecked="{Binding SelectedOrientation, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter={x:Static models:DisplayOrientation.Landscape}}"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolean}}"
+                             Click="OnOrientationClick">
+                    <TextBlock Text="&#xE7F4;" FontFamily="{DynamicResource IconFont}" />
+                </RadioButton>
+                <RadioButton Style="{StaticResource OrientationRadioStyle}"
+                             Tag="Portrait"
+                             ToolTip="Portrait"
+                             AutomationProperties.Name="Portrait"
+                             IsChecked="{Binding SelectedOrientation, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter={x:Static models:DisplayOrientation.Portrait}}"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolean}}"
+                             Click="OnOrientationClick">
+                    <TextBlock Text="&#xE7F4;" FontFamily="{DynamicResource IconFont}">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="90" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </RadioButton>
+                <RadioButton Style="{StaticResource OrientationRadioStyle}"
+                             Tag="LandscapeFlipped"
+                             ToolTip="Landscape (flipped)"
+                             AutomationProperties.Name="Landscape flipped"
+                             IsChecked="{Binding SelectedOrientation, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter={x:Static models:DisplayOrientation.LandscapeFlipped}}"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolean}}"
+                             Click="OnOrientationClick">
+                    <TextBlock Text="&#xE7F4;" FontFamily="{DynamicResource IconFont}">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="180" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </RadioButton>
+                <RadioButton Style="{StaticResource OrientationRadioStyle}"
+                             Tag="PortraitFlipped"
+                             ToolTip="Portrait (flipped)"
+                             AutomationProperties.Name="Portrait flipped"
+                             IsChecked="{Binding SelectedOrientation, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter={x:Static models:DisplayOrientation.PortraitFlipped}}"
+                             IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolean}}"
+                             Click="OnOrientationClick">
+                    <TextBlock Text="&#xE7F4;" FontFamily="{DynamicResource IconFont}">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="270" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </RadioButton>
+            </StackPanel>
+
+            <TextBlock Grid.Column="2"
+                       Text="Rotating..."
+                       Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       FontSize="11"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Inline error -->
+        <TextBlock Text="{Binding StatusMessage}"
+                   Visibility="{Binding StatusMessage, Converter={StaticResource NullToVisibility}}"
+                   Foreground="{DynamicResource DangerBrush}"
+                   FontSize="11"
+                   TextWrapping="Wrap"
+                   Margin="27,4,0,0" />
+
+    </StackPanel>
+</UserControl>
+

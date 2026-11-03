@@ -1,0 +1,392 @@
+<Window x:Class="ScreenUtility.Windows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Screen Utility Settings"
+        Icon="pack://application:,,,/ScreenUtility;component/Assets/app.ico"
+        Width="780"
+        Height="590"
+        MinWidth="700"
+        MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource PanelBackgroundBrush}"
+        FontFamily="{DynamicResource UiFont}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <Window.Resources>
+        <Style x:Key="SettingsRowStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SeperatorBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="7" />
+            <Setter Property="Padding" Value="13,11" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+        <Style x:Key="RowTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="RowHintStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="188" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation -->
+        <DockPanel Grid.Column="0" Margin="16,18,10,16">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="2,0,0,22">
+                <Border Width="30" Height="30" CornerRadius="7" Background="{DynamicResource AccentSoftBrush}">
+                    <TextBlock Text="&#xE7F4;"
+                               FontFamily="{DynamicResource IconFont}"
+                               FontSize="17"
+                               Foreground="{DynamicResource AccentBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Margin="9,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="Screen Utility" FontSize="13" FontWeight="SemiBold" />
+                    <TextBlock Text="Display controls" FontSize="10.5" Foreground="{DynamicResource SecondaryTextBrush}" />
+                </StackPanel>
+            </StackPanel>
+
+            <TextBlock DockPanel.Dock="Bottom"
+                       Text="Changes are saved automatically."
+                       FontSize="10.5"
+                       Foreground="{DynamicResource TertiaryTextBrush}"
+                       TextWrapping="Wrap"
+                       Margin="4,0" />
+
+            <StackPanel DockPanel.Dock="Top">
+                <RadioButton x:Name="NavDisplays"
+                             Style="{StaticResource NavRadioStyle}"
+                             Content="Displays"
+                             Tag="displays"
+                             GroupName="SettingsNav"
+                             IsChecked="True"
+                             Checked="OnNavChecked" />
+                <RadioButton x:Name="NavPreferences"
+                             Style="{StaticResource NavRadioStyle}"
+                             Content="Preferences"
+                             Tag="preferences"
+                             GroupName="SettingsNav"
+                             Checked="OnNavChecked" />
+                <RadioButton x:Name="NavAbout"
+                             Style="{StaticResource NavRadioStyle}"
+                             Content="About"
+                             Tag="about"
+                             GroupName="SettingsNav"
+                             Checked="OnNavChecked" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Pages -->
+        <Border Grid.Column="1"
+                BorderBrush="{DynamicResource SeperatorBrush}"
+                BorderThickness="1,0,0,0">
+            <Grid Margin="26,22,26,20">
+
+                <!-- Displays -->
+                <Grid x:Name="DisplaysPage">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="Displays" FontFamily="{DynamicResource DisplayFont}" FontSize="21" FontWeight="SemiBold" />
+                        <TextBlock Text="Rename displays, choose what appears in the flyout, and change their order."
+                                   Style="{StaticResource RowHintStyle}" />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding Displays}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource SettingsRowStyle}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel VerticalAlignment="Center">
+                                                <Button Style="{StaticResource IconButtonStyle}"
+                                                        Width="24" Height="18"
+                                                        Click="OnMoveUpClick"
+                                                        ToolTip="Move up"
+                                                        AutomationProperties.Name="Move display up">
+                                                    <TextBlock Text="&#xE70E;"
+                                                               FontFamily="{DynamicResource IconFont}"
+                                                               FontSize="10" />
+                                                </Button>
+                                                <Button Style="{StaticResource IconButtonStyle}"
+                                                        Width="24" Height="18"
+                                                        Click="OnMoveDownClick"
+                                                        ToolTip="Move down"
+                                                        AutomationProperties.Name="Move display down">
+                                                    <TextBlock Text="&#xE70D;"
+                                                               FontFamily="{DynamicResource IconFont}"
+                                                               FontSize="10" />
+                                                </Button>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="10,0,12,0" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBox Style="{StaticResource SettingsTextBoxStyle}"
+                                                             Width="250"
+                                                             Text="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                                                             AutomationProperties.Name="Display name" />
+                                                    <Border Style="{StaticResource BadgeBorderStyle}"
+                                                            Visibility="{Binding IsPrimary, Converter={StaticResource BoolToVisibility}}">
+                                                        <TextBlock Text="PRIMARY" Style="{StaticResource BadgeTextStyle}" />
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <StackPanel Orientation="Horizontal" Margin="2,4,0,0">
+                                                    <TextBlock Text="{Binding HardwareName}"
+                                                               FontSize="10.5"
+                                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               MaxWidth="260" />
+                                                    <TextBlock Text="  &#xB7;  "
+                                                               FontSize="10.5"
+                                                               Foreground="{DynamicResource TertiaryTextBrush}" />
+                                                    <TextBlock Text="{Binding ResolutionText}"
+                                                               FontSize="10.5"
+                                                               Foreground="{DynamicResource TertiaryTextBrush}" />
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="Show"
+                                                           Style="{StaticResource RowTitleStyle}"
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource SecondaryTextBrush}" />
+                                                <CheckBox Style="{StaticResource ToggleSwitchStyle}"
+                                                          IsChecked="{Binding IsVisible, Mode=TwoWay}"
+                                                          Margin="9,0,0,0"
+                                                          ToolTip="Show this display in the flyout"
+                                                          AutomationProperties.Name="Show in flyout" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- Preferences -->
+                <Grid x:Name="PreferencesPage" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="Preferences" FontFamily="{DynamicResource DisplayFont}" FontSize="21" FontWeight="SemiBold" />
+                        <TextBlock Text="Scrolling, appearance, and startup behavior."
+                                   Style="{StaticResource RowHintStyle}" />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <TextBlock Text="SCROLLING" Style="{StaticResource SectionLabelStyle}" />
+
+                            <Border Style="{StaticResource SettingsRowStyle}">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Scroll on the tray icon" Style="{StaticResource RowTitleStyle}" />
+                                        <TextBlock Text="Use the mouse wheel over the tray icon to change brightness."
+                                                   Style="{StaticResource RowHintStyle}" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource ToggleSwitchStyle}"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding ScrollOnTray, Mode=TwoWay}"
+                                              AutomationProperties.Name="Scroll on the tray icon" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsRowStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Scroll step" Style="{StaticResource RowTitleStyle}" />
+                                        <TextBlock Text="How much brightness changes per wheel notch."
+                                                   Style="{StaticResource RowHintStyle}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,2,0">
+                                        <Slider Style="{StaticResource AccentSliderStyle}"
+                                                Width="150"
+                                                Minimum="1"
+                                                Maximum="20"
+                                                TickFrequency="1"
+                                                IsSnapToTickEnabled="True"
+                                                Value="{Binding ScrollStep, Mode=TwoWay}" />
+                                        <TextBlock Text="{Binding ScrollStep}"
+                                                   Width="24"
+                                                   TextAlignment="Right"
+                                                   FontSize="12.5"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsRowStyle}">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Invert scroll direction" Style="{StaticResource RowTitleStyle}" />
+                                        <TextBlock Text="Scroll up to decrease brightness instead of increasing it."
+                                                   Style="{StaticResource RowHintStyle}" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource ToggleSwitchStyle}"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding InvertScroll, Mode=TwoWay}"
+                                              AutomationProperties.Name="Invert scroll direction" />
+                                </Grid>
+                            </Border>
+
+                            <TextBlock Text="APPEARANCE" Style="{StaticResource SectionLabelStyle}" Margin="0,14,0,8" />
+
+                            <Border Style="{StaticResource SettingsRowStyle}">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Theme" Style="{StaticResource RowTitleStyle}" />
+                                        <TextBlock Text="Follow Windows, or use a fixed color theme."
+                                                   Style="{StaticResource RowHintStyle}" />
+                                    </StackPanel>
+                                    <Border HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource InputBackgroundBrush}"
+                                            BorderBrush="{DynamicResource PanelBorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="7"
+                                            Padding="3">
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton Style="{StaticResource SegmentedRadioStyle}"
+                                                         Content="System"
+                                                         Tag="0"
+                                                         GroupName="ThemeChoice"
+                                                         IsChecked="{Binding ThemeIndex, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter=0}"
+                                                         Checked="OnThemeChecked" />
+                                            <RadioButton Style="{StaticResource SegmentedRadioStyle}"
+                                                         Content="Light"
+                                                         Tag="1"
+                                                         GroupName="ThemeChoice"
+                                                         IsChecked="{Binding ThemeIndex, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter=1}"
+                                                         Checked="OnThemeChecked" />
+                                            <RadioButton Style="{StaticResource SegmentedRadioStyle}"
+                                                         Content="Dark"
+                                                         Tag="2"
+                                                         GroupName="ThemeChoice"
+                                                         IsChecked="{Binding ThemeIndex, Mode=OneWay, Converter={StaticResource Equality}, ConverterParameter=2}"
+                                                         Checked="OnThemeChecked" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <TextBlock Text="STARTUP" Style="{StaticResource SectionLabelStyle}" Margin="0,14,0,8" />
+
+                            <Border Style="{StaticResource SettingsRowStyle}">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Start with Windows" Style="{StaticResource RowTitleStyle}" />
+                                        <TextBlock Text="Launch Screen Utility when you sign in."
+                                                   Style="{StaticResource RowHintStyle}" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource ToggleSwitchStyle}"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding StartWithWindows, Mode=TwoWay}"
+                                              AutomationProperties.Name="Start with Windows" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- About -->
+                <Grid x:Name="AboutPage" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="About" FontFamily="{DynamicResource DisplayFont}" FontSize="21" FontWeight="SemiBold" />
+                        <TextBlock Text="Hardware-level display controls for Windows."
+                                   Style="{StaticResource RowHintStyle}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                            <Border Width="52" Height="52" CornerRadius="12" Background="{DynamicResource AccentSoftBrush}">
+                                <TextBlock Text="&#xE7F4;"
+                                           FontFamily="{DynamicResource IconFont}"
+                                           FontSize="28"
+                                           Foreground="{DynamicResource AccentBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Margin="13,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Screen Utility" FontFamily="{DynamicResource DisplayFont}" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock x:Name="VersionText" FontSize="11.5" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="Brightness, contrast, and orientation in one place. Brightness and contrast are applied through DDC/CI, with WMI used for built-in laptop panels. Screen orientation is changed with the Windows display API."
+                                   Style="{StaticResource RowHintStyle}"
+                                   FontSize="12"
+                                   LineHeight="18"
+                                   Margin="0,0,0,18" />
+
+                        <Border Style="{StaticResource SettingsRowStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Not every display supports every control" Style="{StaticResource RowTitleStyle}" />
+                                <TextBlock Text="If your monitor blocks DDC/CI, adjust it in the monitor's own menu or enable DDC/CI in its settings. The app will hide controls that a display does not report."
+                                           Style="{StaticResource RowHintStyle}" />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="SETTINGS FILE" Style="{StaticResource SectionLabelStyle}" Margin="0,10,0,8" />
+                        <Border Style="{StaticResource SettingsRowStyle}">
+                            <StackPanel>
+                                <TextBox Text="{Binding SettingsPath, Mode=OneWay}"
+                                         IsReadOnly="True"
+                                         Style="{StaticResource SettingsTextBoxStyle}"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Padding="0"
+                                         FontSize="11"
+                                         Foreground="{DynamicResource SecondaryTextBrush}" />
+                                <Button Style="{StaticResource SecondaryButtonStyle}"
+                                        Content="Open settings folder"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,10,0,0"
+                                        Click="OnOpenSettingsFolderClick" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
