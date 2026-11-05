@@ -179,23 +179,26 @@ public sealed class FlyoutViewModel : ObservableObject, IDisposable
         }
     }
 
-    public void AdjustAllBrightness(int delta)
+    public IReadOnlyList<MonitorViewModel> AdjustTrayBrightness(int delta)
     {
+        var targets = LinkedBrightness
+            ? Monitors.Where(m => m.SupportsBrightness).ToList()
+            : Monitors.Where(m => m.IsPrimary && m.SupportsBrightness).Take(1).ToList();
+
         _syncingBrightness = true;
         try
         {
-            foreach (var monitor in Monitors)
+            foreach (var monitor in targets)
             {
-                if (monitor.SupportsBrightness)
-                {
-                    monitor.Brightness = Math.Clamp(monitor.Brightness + delta, 0, 100);
-                }
+                monitor.Brightness = Math.Clamp(monitor.Brightness + delta, 0, 100);
             }
         }
         finally
         {
             _syncingBrightness = false;
         }
+
+        return targets;
     }
 
     public void ApplyDisplayPreferences()

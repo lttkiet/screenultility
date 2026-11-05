@@ -218,16 +218,29 @@ public sealed class SettingsViewModel : ObservableObject
 
     private void OnDisplayItemChanged()
     {
-        var current = _settings.Current;
         _settings.Update(s =>
         {
-            s.MonitorNames = Displays
-                .Where(d => !string.IsNullOrWhiteSpace(d.Name) && !string.Equals(d.Name, d.HardwareName, StringComparison.Ordinal))
-                .ToDictionary(d => d.Key, d => d.Name.Trim(), StringComparer.OrdinalIgnoreCase);
-            s.HiddenMonitors = Displays
-                .Where(d => !d.IsVisible)
-                .Select(d => d.Key)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var display in Displays)
+            {
+                if (!string.IsNullOrWhiteSpace(display.Name) &&
+                    !string.Equals(display.Name, display.HardwareName, StringComparison.Ordinal))
+                {
+                    s.MonitorNames[display.Key] = display.Name.Trim();
+                }
+                else
+                {
+                    s.MonitorNames.Remove(display.Key);
+                }
+
+                if (display.IsVisible)
+                {
+                    s.HiddenMonitors.Remove(display.Key);
+                }
+                else
+                {
+                    s.HiddenMonitors.Add(display.Key);
+                }
+            }
         });
 
         DisplayPreferencesChanged?.Invoke(this, EventArgs.Empty);
@@ -248,7 +261,27 @@ public sealed class SettingsViewModel : ObservableObject
             Displays[i].Position = i + 1;
         }
 
-        var order = Displays.Select(d => d.Key).ToList();
+        var connectedKeys = Displays.Select(d => d.Key).ToList();
+        var connectedSet = connectedKeys.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var order = _settings.Current.MonitorOrder
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var connectedSlots = order
+            .Select((key, index) => (key, index))
+            .Where(entry => connectedSet.Contains(entry.key))
+            .Select(entry => entry.index)
+            .ToList();
+
+        for (var i = 0; i < connectedSlots.Count; i++)
+        {
+            order[connectedSlots[i]] = connectedKeys[i];
+        }
+
+        for (var i = connectedSlots.Count; i < connectedKeys.Count; i++)
+        {
+            order.Add(connectedKeys[i]);
+        }
+
         _settings.Update(s => s.MonitorOrder = order);
         DisplayPreferencesChanged?.Invoke(this, EventArgs.Empty);
     }

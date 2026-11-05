@@ -78,7 +78,6 @@ public partial class App : Application
 
             _scrollWatcher = new TrayScrollWatcher(() => _tray?.GetIconRect(), Dispatcher);
             _scrollWatcher.WheelOverTray += OnWheelOverTray;
-            _scrollWatcher.GlobalMouseDown += OnGlobalMouseDown;
             _scrollWatcher.SetEnabled(_settings.Current.ScrollOnTray);
 
             _displayWatcher = new DisplayChangeWatcher();
@@ -104,7 +103,7 @@ public partial class App : Application
                 "Screen Utility",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
-            Shutdown();
+            BeginShutdown();
         }
     }
 
@@ -174,33 +173,6 @@ public partial class App : Application
         }
     }
 
-    private void OnGlobalMouseDown(object? sender, System.Drawing.Point pt)
-    {
-        if (_trayMenu is { IsOpen: true } menu)
-        {
-            try
-            {
-                var topLeft = menu.PointToScreen(new Point(0, 0));
-                var width = menu.ActualWidth;
-                var height = menu.ActualHeight;
-
-                if (width > 0 && height > 0)
-                {
-                    var menuRect = new Rect(topLeft.X, topLeft.Y, width, height);
-                    if (!menuRect.Contains(pt.X, pt.Y))
-                    {
-                        menu.IsOpen = false;
-                        _trayMenu = null;
-                    }
-                }
-            }
-            catch
-            {
-                menu.IsOpen = false;
-                _trayMenu = null;
-            }
-        }
-    }
 
     private void QueueTrayMenu(System.Drawing.Point screenPoint)
     {
@@ -320,7 +292,9 @@ public partial class App : Application
         settingsItem.Click += (_, _) => ShowSettings();
 
         var quit = CreateItem("Quit Screen Utility", "\uE711");
-        quit.Click += (_, _) => Shutdown();
+        quit.Click += (_, _) => Dispatcher.BeginInvoke(
+            DispatcherPriority.ApplicationIdle,
+            new Action(BeginShutdown));
 
         menu.Items.Add(open);
         menu.Items.Add(identify);
@@ -382,10 +356,9 @@ public partial class App : Application
 
             var step = _flyoutViewModel.ScrollStep;
             var direction = (_flyoutViewModel.InvertScroll ? -1 : 1) * Math.Sign(notches) * step;
-            _flyoutViewModel.AdjustAllBrightness(direction);
+            var adjustedMonitors = _flyoutViewModel.AdjustTrayBrightness(direction);
 
-            var rows = _flyoutViewModel.Monitors
-                .Where(m => m.SupportsBrightness)
+            var rows = adjustedMonitors
                 .Select(m => new OverlayRow(m.DisplayName, $"{m.BrightnessPercent}%"))
                 .ToList();
 
@@ -570,6 +543,13 @@ public partial class App : Application
         {
             Log(ex);
         }
+    }
+
+    private void BeginShutdown()
+    {
+        _shuttingDown = true;
+        _flyout?.ClosePermanently();
+        Shutdown();
     }
 
     private void OnThemeChanged(object? sender, EventArgs e)

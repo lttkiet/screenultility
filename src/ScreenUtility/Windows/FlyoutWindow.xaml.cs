@@ -16,6 +16,7 @@ public partial class FlyoutWindow : Window
     private readonly FlyoutViewModel _viewModel;
     private PixelRect _trayRect;
     private bool _allowClose;
+    private bool _closed;
 
     public FlyoutWindow(FlyoutViewModel viewModel)
     {
@@ -51,8 +52,19 @@ public partial class FlyoutWindow : Window
 
     public void ClosePermanently()
     {
+        if (_closed)
+        {
+            return;
+        }
+
         _allowClose = true;
         Close();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _closed = true;
+        base.OnClosed(e);
     }
 
     protected override void OnClosing(CancelEventArgs e)

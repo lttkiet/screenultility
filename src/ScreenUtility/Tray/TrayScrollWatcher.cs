@@ -21,7 +21,6 @@ public sealed class TrayScrollWatcher : IDisposable
     private bool _disposed;
 
     public event EventHandler<int>? WheelOverTray;
-    public event EventHandler<System.Drawing.Point>? GlobalMouseDown;
 
     public TrayScrollWatcher(Func<PixelRect?> rectProvider, Dispatcher dispatcher)
     {
@@ -80,18 +79,7 @@ public sealed class TrayScrollWatcher : IDisposable
             if (nCode >= 0)
             {
                 var msg = (int)wParam;
-                if (msg == NativeMethods.WM_LBUTTONDOWN ||
-                    msg == NativeMethods.WM_RBUTTONDOWN ||
-                    msg == NativeMethods.WM_MBUTTONDOWN ||
-                    msg == NativeMethods.WM_NCLBUTTONDOWN ||
-                    msg == NativeMethods.WM_NCRBUTTONDOWN)
-                {
-                    var info = Marshal.PtrToStructure<NativeMethods.MSLLHOOKSTRUCT>(lParam);
-                    var pt = new System.Drawing.Point(info.pt.X, info.pt.Y);
-                    _dispatcher.BeginInvoke(DispatcherPriority.Input,
-                        new Action(() => GlobalMouseDown?.Invoke(this, pt)));
-                }
-                else if (msg == NativeMethods.WM_MOUSEWHEEL && _scrollEnabled && _rect is { } rect)
+                if (msg == NativeMethods.WM_MOUSEWHEEL && _scrollEnabled && _rect is { } rect)
                 {
                     var info = Marshal.PtrToStructure<NativeMethods.MSLLHOOKSTRUCT>(lParam);
                     if (rect.Contains(info.pt.X, info.pt.Y))
